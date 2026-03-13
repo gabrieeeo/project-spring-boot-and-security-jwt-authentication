@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<UserModel, UUID>{
     // para evitar o uso de null e fornecer uma maneira mais segura de lidar com valores que podem não existir.
     Optional<UserModel> findByUsername(String username);
 
+    boolean existsByUsername(String username);
+
 }

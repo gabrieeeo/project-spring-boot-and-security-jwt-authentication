@@ -1,5 +1,6 @@
 package me.gabriel.authentication.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,7 @@ import me.gabriel.authentication.model.dto.RegisterDTO;
 import me.gabriel.authentication.repository.UserRepository;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(value = "/api/auth", produces = {"application/json"})
 public class AuthenticationController {
 
     private final UserRepository userRepository;
@@ -21,9 +22,10 @@ public class AuthenticationController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE) 
     public ResponseEntity<String> register(@RequestBody RegisterDTO registerDTO) {
-        if (userRepository.findByUsername(registerDTO.username()) != null) {
+
+        if (userRepository.existsByUsername(registerDTO.username()))  {
             return ResponseEntity.badRequest().body("Username is already in use.");
         }
 
