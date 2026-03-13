@@ -112,6 +112,9 @@ The JWT contain the following claims:
 }
 ```
 
+<br>
+<br>
+
 ## Swagger/OpenAPI
 
 Access the interactive API documentation at:
