@@ -1,0 +1,37 @@
+package me.gabriel.authentication.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import me.gabriel.authentication.model.UserModel;
+import me.gabriel.authentication.model.dto.RegisterDTO;
+import me.gabriel.authentication.repository.UserRepository;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthenticationController {
+
+    private final UserRepository userRepository;
+
+    public AuthenticationController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterDTO registerDTO) {
+        if (userRepository.findByUsername(registerDTO.username()) != null) {
+            return ResponseEntity.badRequest().body("Username is already in use.");
+        }
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
+        UserModel userModel = new UserModel(registerDTO.username(), registerDTO.email(), encryptedPassword, registerDTO.role());
+        userRepository.save(userModel);
+
+        return ResponseEntity.ok().body("User registered successfully.");
+        
+    }
+}
