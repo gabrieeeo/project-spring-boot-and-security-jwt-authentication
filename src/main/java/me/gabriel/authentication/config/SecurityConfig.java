@@ -29,19 +29,20 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Configura o gerenciamento de sessão para ser stateless, ou seja, sem estado, pois o JWT é auto-contido e não requer sessões no servidor.
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("api/auth/register").permitAll()
+            .requestMatchers("/api/auth/register").permitAll()
+            .requestMatchers("/api/auth/login").permitAll()
             .anyRequest().authenticated()
         )
         .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

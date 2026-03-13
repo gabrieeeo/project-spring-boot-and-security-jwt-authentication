@@ -46,6 +46,21 @@ public class TokenService {
         }
     }
 
+    public LocalDateTime getExpirationTime(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            Instant expiresAt = JWT.require(algorithm)
+            .withIssuer("authentication-api")
+            .build()
+            .verify(token)
+            .getExpiresAt().toInstant();
+
+            return LocalDateTime.ofInstant(expiresAt, ZoneOffset.of("-03:00"));
+        } catch (JWTVerificationException e) {
+            throw new RuntimeException("Error while getting expiration time.", e);
+        }
+    }
+
     private Instant generateExpirationTime() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
